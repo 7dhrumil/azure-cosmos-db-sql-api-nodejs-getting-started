@@ -16,7 +16,7 @@ const newItem = {
 //  </DefineNewItem>
 
 async function main() {
-  
+
   // <CreateClientObjectDatabaseContainer>
   const { endpoint, key, databaseId, containerId } = config;
 
@@ -28,61 +28,35 @@ async function main() {
   // Make sure Tasks database is already setup. If not, create it.
   await dbContext.create(client, databaseId, containerId);
   // </CreateClientObjectDatabaseContainer>
-  
+
   try {
     // <QueryItems>
     console.log(`Querying container: Items`);
 
+    const dateFrom = new Date('2021-06-16T00:00:00.0000000Z').toISOString();
+    const dateTo = new Date('2021-06-17T00:00:00.0000000Z').toISOString();
     // query to return all items
+    // const querySpec = {
+    //   query: `SELECT c.id,c.Resource,c.Power,TimestampToDateTime(c.Date*1000) as Date from c 
+    //   Where TimestampToDateTime(c.Date*1000) > '${dateFrom}' And TimestampToDateTime(c.Date*1000) < '${dateTo}'`
+    // };
     const querySpec = {
-      query: "SELECT * from c"
+      query: `SELECT  c.id,c.Resource,c.Power from c 
+      Where c.Date > DateTimeToTimestamp('${dateFrom}')/1000 And c.Date < DateTimeToTimestamp('${dateTo}')/1000 `
     };
-    
+//
+    console.time('doSomething');
     // read all items in the Items container
     const { resources: items } = await container.items
       .query(querySpec)
       .fetchAll();
-
-    items.forEach(item => {
-      console.log(`${item.id} - ${item.description}`);
-    });
+      console.timeEnd('doSomething');
+    
+    // items.forEach(item => {
+    //   console.log(`${item.total} ${item.fromD} - ${item.toD}- ${item.Resource} - ${item.Power}`);
+    // });
     // </QueryItems>
-    
-    // <CreateItem>
-    /** Create new item
-     * newItem is defined at the top of this file
-     */
-    const { resource: createdItem } = await container.items.create(newItem);
-    
-    console.log(`\r\nCreated new item: ${createdItem.id} - ${createdItem.description}\r\n`);
-    // </CreateItem>
-    
-    // <UpdateItem>
-    /** Update item
-     * Pull the id and partition key value from the newly created item.
-     * Update the isComplete field to true.
-     */
-    const { id, category } = createdItem;
 
-    createdItem.isComplete = true;
-
-    const { resource: updatedItem } = await container
-      .item(id, category)
-      .replace(createdItem);
-
-    console.log(`Updated item: ${updatedItem.id} - ${updatedItem.description}`); 
-    console.log(`Updated isComplete to ${updatedItem.isComplete}\r\n`);
-    // </UpdateItem>
-    
-    // <DeleteItem>    
-    /**
-     * Delete item
-     * Pass the id and partition key value to delete the item
-     */
-    const { resource: result } = await container.item(id, category).delete();
-    console.log(`Deleted item with id: ${id}`);
-    // </DeleteItem>  
-    
   } catch (err) {
     console.log(err.message);
   }
