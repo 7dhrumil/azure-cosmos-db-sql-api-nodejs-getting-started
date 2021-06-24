@@ -1,0 +1,47 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "CosmosDB APIs",
+        "description": "CosmosDB APIs in NodeJs using JavaScript",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/api/pumpdata": {
+            "get": {
+                "tags": [
+                    "Fetch pumpdata from CosmosDB"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "toDate",
+                        "required": true,
+                        "description": "toDate"
+                    },
+                    {
+                        "in": "query",
+                        "name": "fromDate",
+                        "required": true,
+                        "description": "fromDate"
+                    }
+                ],
+                "summary": "Get all pumpdata",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+    }
+    }
+}

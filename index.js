@@ -1,8 +1,12 @@
 // @ts-check
 //  <ImportConfiguration>
 const express = require("express");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger.json");
 const app = express();
 const port = 3005;
+
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const CosmosClient = require("@azure/cosmos").CosmosClient;
 const config = require("./config");
