@@ -71,7 +71,6 @@ async function main() {
             query: `SELECT c.${m.metric} as MatricValue,c.Date from c  Where c.Date > ${m.start} And c.Date < ${m.end}`,
           };
           const data = await container.items.query(querySpec).fetchAll();
-          console.log(data);
           return { [m.metric]: data.resources };
 
         });
