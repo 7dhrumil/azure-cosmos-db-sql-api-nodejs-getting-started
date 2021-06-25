@@ -42,6 +42,31 @@
                     }
                 }
             }
-    }
+        },
+        "/api/pumpdata/metrics": {
+            "post": {
+                "tags": [
+                    "Fetch pumpdata metrics from CosmosDB"
+                ],
+                "parameters": [],
+                "requestBody": {
+                    "description": "Fetch pumpdata metrics from CosmosDB",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "summary": "Get pumpdata metrics",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
     }
 }

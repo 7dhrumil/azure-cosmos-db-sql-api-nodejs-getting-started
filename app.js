@@ -40,20 +40,27 @@ async function main() {
     //   query: `SELECT c.id,c.Resource,c.Power,TimestampToDateTime(c.Date*1000) as Date from c 
     //   Where TimestampToDateTime(c.Date*1000) > '${dateFrom}' And TimestampToDateTime(c.Date*1000) < '${dateTo}'`
     // };
+    
+    
+    // const querySpec = {
+    //   query: `SELECT top 5 c._ts,c.id,c.Resource,c.Power from c 
+    //   Where c.Date > DateTimeToTimestamp('${dateFrom}') And c.Date*1000 < DateTimeToTimestamp('${dateTo}') `
+    // };
+
     const querySpec = {
-      query: `SELECT  c.id,c.Resource,c.Power from c 
-      Where c.Date > DateTimeToTimestamp('${dateFrom}')/1000 And c.Date < DateTimeToTimestamp('${dateTo}')/1000 `
+      query: `SELECT top 100 * from c Where c.Resource ='Metric' And TimestampToDateTime(c.Date*1000) > '${dateFrom}' And TimestampToDateTime(c.Date*1000) < '${dateTo}'`
     };
 //
     console.time('doSomething');
     // read all items in the Items container
-    const { resources: items } = await container.items
-      .query(querySpec)
+      const result = await container.items
+      .query(querySpec, { populateQueryMetrics: true, maxItemCount: -1, maxDegreeOfParallelism: -1 })
       .fetchAll();
       console.timeEnd('doSomething');
     
+      console.log('doSomething', result.resources[0].items, JSON.stringify(result.queryMetrics));
     // items.forEach(item => {
-    //   console.log(`${item.total} ${item.fromD} - ${item.toD}- ${item.Resource} - ${item.Power}`);
+    //   console.log(`${item.Resource} ${item.total} - ${item.toD}- ${item.Resource} - ${item.Power}`);
     // });
     // </QueryItems>
 
