@@ -27,30 +27,6 @@ async function main() {
 
   // Make sure Tasks database is already setup. If not, create it.
   await dbContext.create(client, databaseId, containerId);
-  // </CreateClientObjectDatabaseContainer>
-
-  app.get("/api/pumpdata", async (req, res) => {
-    try {
-      var toDate = req.query.toDate;
-      var fromDate = req.query.fromDate;
-
-      const querySpec2 = {
-        query: `SELECT top 2000 c.id,c.Resource,c.Power from c 
-          Where c.Date > DateTimeToTimestamp('${toDate}')/1000 And c.Date < DateTimeToTimestamp('${fromDate}')/1000 `,
-      };
-      console.time("doSomething");
-      const data = await container.items.query(querySpec2).fetchAll();
-      console.timeEnd("doSomething");
-
-      console.log(data.resources.length);
-      return res.status(200).send({
-        message: "Success",
-        data: data.resources,
-      });
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  });
 
   app.post("/api/pumpdata/metrics", async (req, res) => {
     try {
@@ -68,9 +44,10 @@ async function main() {
       if (body.config.widgetsetup == 'no') {
         const mextricsQuery = body.config.metrics.map(async (m) => {
           const querySpec = {
-            query: `SELECT c.${m.metric} as MatricValue,c.Date from c  Where c.Date > ${m.start} And c.Date < ${m.end}`,
+            query: `SELECT c.${m.metric} as MatricValue,c.Date * 1000 as Date from c  
+            Where c.Date > ${m.start} And c.Date < ${m.end} and c.Resource = 'Metric'`,
           };
-          const data = await container.items.query(querySpec).fetchAll();
+          const data = await container.items.query(querySpec,{ maxItemCount: -1 }).fetchAll();
           return { [m.metric]: data.resources };
 
         });

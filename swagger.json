@@ -16,33 +16,6 @@
         "application/json"
     ],
     "paths": {
-        "/api/pumpdata": {
-            "get": {
-                "tags": [
-                    "Fetch pumpdata from CosmosDB"
-                ],
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "toDate",
-                        "required": true,
-                        "description": "toDate"
-                    },
-                    {
-                        "in": "query",
-                        "name": "fromDate",
-                        "required": true,
-                        "description": "fromDate"
-                    }
-                ],
-                "summary": "Get all pumpdata",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
         "/api/pumpdata/metrics": {
             "post": {
                 "tags": [
